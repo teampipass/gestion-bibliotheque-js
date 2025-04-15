@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CODE WALL - Mini Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .post-form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .post-form input, .post-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .post-form button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .posts-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CODE WALL</h1>
+        <div class="nav-links">
+            <a href="#">My Blogs</a>
+            <a href="#">Login</a>
+            <a href="#">Sign Up</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="post-form">
+            <h2>Add New Post</h2>
+            <input type="text" id="post-title" placeholder="Title">
+            <textarea id="post-content" placeholder="Description"></textarea>
+            <button id="post-btn">POST</button>
+        </section>
+
+        <section class="posts-container">
+            <h2>Your Blog Posts</h2>
+            <div id="posts-list"></div>
+        </section>
+    </main>
+
+    <script>
+        class Post {
+            constructor(id, title, content, author) {
+                this.id = id;
+                this.title = title;
+                this.content = content;
+                this.author = author || "Anonymous";
+                this.date = new Date();
+            }
+
+            toJSON() {
+                return {
+                    id: this.id,
+                    title: this.title,
+                    content: this.content,
+                    author: this.author,
+                    date: this.date.toISOString()
+                };
+            }
+
+            static fromJSON(json) {
+                const post = new Post(json.id, json.title, json.content, json.author);
+                post.date = new Date(json.date);
+                return post;
+            }
+        }
+
+        class Blog {
+            constructor() {
+                this.posts = this.loadPosts();
+                this.initEvents();
+                this.renderPosts();
+            }
+
+            loadPosts() {
+                const saved = localStorage.getItem('blog-posts');
+                return saved ? JSON.parse(saved).map(Post.fromJSON) : [];
+            }
+
+            savePosts() {
+                localStorage.setItem('blog-posts', JSON.stringify(this.posts.map(p => p.toJSON())));
+            }
+
+            addPost(title, content) {
+                const newPost = new Post(
+                    Date.now(),
+                    title,
+                    content,
+                    "CurrentUser"
+                );
+                this.posts.unshift(newPost);
+                this.savePosts();
+                this.renderPosts();
+            }
+
+            initEvents() {
+                document.getElementById('post-btn').addEventListener('click', () => {
+                    const title = document.getElementById('post-title').value;
+                    const content = document.getElementById('post-content').value;
+                    if (title && content) {
+                        this.addPost(title, content);
+
+                        document.getElementById('post-title').value = '';
+                        document.getElementById('post-content').value = '';
+                    }
+                });
+            }
+
+            renderPosts() {
+                const container = document.getElementById('posts-list');
+                container.innerHTML = this.posts.map(post => `
+                    <article style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee;">
+                        <h3>${post.title}</h3>
+                        <p>${post.content}</p>
+                        <small>Posted by ${post.author} on ${post.date.toLocaleString()}</small>
+                    </article>
+                `).join('');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new Blog();
+        });
+    </script>
+</body>
+</html>
