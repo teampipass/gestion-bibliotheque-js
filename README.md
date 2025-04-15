@@ -65,7 +65,7 @@ Structure	Méthodes utilisées
 Array	push/pop/shift/unshift
 Set	add/delete/has
 Map	set/get/delete
-▶ Exécution
+ Exécution
 
 # Lancer un exercice (remplacer N par 1-5)
 node exN.js
