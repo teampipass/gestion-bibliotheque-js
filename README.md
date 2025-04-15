@@ -1,9 +1,9 @@
 # gestion-bibliotheque-js
 # Atelier JavaScript POO - Livrable
 
-## 📝 Mini-Rapport Technique
+## Mini-Rapport Technique
 
-### 🚗 Exercice 1 - Héritage Automobile (ex1.js)
+###  Exercice 1 - Héritage Automobile (ex1.js)
 - **Implémentation** : 
   - Classes `Voiture`, `Hyundai`, `Ford` avec héritage
   - Tri des véhicules par année (`sort()`)
